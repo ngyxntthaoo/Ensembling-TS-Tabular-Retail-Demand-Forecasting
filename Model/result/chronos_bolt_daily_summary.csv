@@ -1,4 +1,4 @@
-model,dataset,target,horizon,mean_mase,median_mase
-Chronos-Bolt-Small,retail_inventory_daily,Demand,7,0.7087,0.6739
-Chronos-Bolt-Small,retail_inventory_daily,Demand,14,0.7159,0.6884
-Chronos-Bolt-Small,retail_inventory_daily,Demand,28,0.733,0.7209
+model,dataset,target,horizon,mean_mase,median_mase,mean_smape,median_smape,mean_rmse,median_rmse,mean_rmsle,median_rmsle
+Chronos-Bolt-Small,retail_inventory_daily,Units Sold,7,0.7144,0.6449,34.3359,32.7843,36.954,33.7793,0.4563,0.4038
+Chronos-Bolt-Small,retail_inventory_daily,Units Sold,14,0.7292,0.6884,35.091,33.194,38.2524,35.8689,0.493,0.4159
+Chronos-Bolt-Small,retail_inventory_daily,Units Sold,28,0.7427,0.7149,35.9839,35.5498,39.5369,37.6004,0.5182,0.4544

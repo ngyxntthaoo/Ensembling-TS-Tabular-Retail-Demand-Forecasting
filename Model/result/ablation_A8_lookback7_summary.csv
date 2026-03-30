@@ -1,0 +1,4 @@
+ablation,model,dataset,target,horizon,lookback,mean_smape,median_smape,mean_mase,median_mase,mean_rmse,median_rmse,mean_rmsle,median_rmsle
+A8-Lookback7,LSTM-Lookback7,retail_inventory_daily,Units Sold,7,7,40.2386,40.623,0.8087,0.8057,41.6798,41.9004,0.63,0.6358
+A8-Lookback7,LSTM-Lookback7,retail_inventory_daily,Units Sold,14,7,41.8034,41.2156,0.8292,0.8047,42.6463,43.0135,0.6478,0.6279
+A8-Lookback7,LSTM-Lookback7,retail_inventory_daily,Units Sold,28,7,38.8045,39.5522,0.7823,0.7877,40.2064,40.9529,0.6242,0.5981

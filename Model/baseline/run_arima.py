@@ -5,8 +5,8 @@ from pmdarima import auto_arima
 
 warnings.filterwarnings("ignore")
 
-DATA_PATH  = "../dataset/sales_data.csv"
-RESULT_DIR = "../result"
+DATA_PATH  = "Model/dataset/sales_data.csv"
+RESULT_DIR = "Model/result"
 TARGET     = "Units Sold"
 TRAIN_END  = "2023-06-30"
 VAL_END    = "2023-10-31"
@@ -79,7 +79,7 @@ def rolling_eval_daily(series, split_end, horizon):
     ]
 
     if len(train_full) < 20:
-        return {"smape": np.nan, "mase": np.nan}
+        return {"smape": np.nan, "mase": np.nan, "rmse": np.nan, "rmsle": np.nan}
 
     # FIT ONCE
     try:
@@ -101,7 +101,7 @@ def rolling_eval_daily(series, split_end, horizon):
 
     except Exception:
 
-        return {"smape": np.nan, "mase": np.nan}
+        return {"smape": np.nan, "mase": np.nan, "rmse": np.nan, "rmsle": np.nan}
 
     all_fc = []
     all_ac = []
@@ -131,24 +131,18 @@ def rolling_eval_daily(series, split_end, horizon):
 
     if not all_fc:
 
-        return {"smape": np.nan, "mase": np.nan}
+        return {"smape": np.nan, "mase": np.nan, "rmse": np.nan, "rmsle": np.nan}
 
     fc_arr = np.array(all_fc)
     ac_arr = np.array(all_ac)
+    fc_c   = np.clip(fc_arr, 0, None)
+    ac_c   = np.clip(ac_arr, 0, None)
 
     return {
-
-        "smape": smape(
-            ac_arr,
-            fc_arr
-        ),
-
-        "mase": mase(
-            ac_arr,
-            fc_arr,
-            train_full.values
-        ),
-
+        "smape": smape(ac_arr, fc_arr),
+        "mase":  mase(ac_arr, fc_arr, train_full.values),
+        "rmse":  float(np.sqrt(np.mean((fc_arr - ac_arr) ** 2))),
+        "rmsle": float(np.sqrt(np.mean((np.log1p(fc_c) - np.log1p(ac_c)) ** 2))),
     }
 
 
@@ -171,7 +165,9 @@ for h in HORIZONS:
 
     scores = {
         "smape": [],
-        "mase": []
+        "mase":  [],
+        "rmse":  [],
+        "rmsle": [],
     }
 
     print(f"\n--- Horizon = {h} ---")
@@ -200,9 +196,9 @@ for h in HORIZONS:
             "horizon": h,
 
             "smape": round(float(r["smape"]), 4),
-
-            "mase": round(float(r["mase"]), 4),
-
+            "mase":  round(float(r["mase"]),  4),
+            "rmse":  round(float(r["rmse"]),  4),
+            "rmsle": round(float(r["rmsle"]), 4),
         })
 
         if (i + 1) % 25 == 0:
@@ -222,53 +218,20 @@ for h in HORIZONS:
 
         "horizon": h,
 
-        "mean_smape":
-        round(
-            float(
-                np.nanmean(
-                    scores["smape"]
-                )
-            ), 4
-        ),
-
-        "median_smape":
-        round(
-            float(
-                np.nanmedian(
-                    scores["smape"]
-                )
-            ), 4
-        ),
-
-        "mean_mase":
-        round(
-            float(
-                np.nanmean(
-                    scores["mase"]
-                )
-            ), 4
-        ),
-
-        "median_mase":
-        round(
-            float(
-                np.nanmedian(
-                    scores["mase"]
-                )
-            ), 4
-        ),
+        "mean_smape":   round(float(np.nanmean(scores["smape"])),   4),
+        "median_smape": round(float(np.nanmedian(scores["smape"])), 4),
+        "mean_mase":    round(float(np.nanmean(scores["mase"])),    4),
+        "median_mase":  round(float(np.nanmedian(scores["mase"])),  4),
+        "mean_rmse":    round(float(np.nanmean(scores["rmse"])),    4),
+        "median_rmse":  round(float(np.nanmedian(scores["rmse"])),  4),
+        "mean_rmsle":   round(float(np.nanmean(scores["rmsle"])),   4),
+        "median_rmsle": round(float(np.nanmedian(scores["rmsle"])), 4),
 
     }
 
     results.append(row)
 
-    print(
-        f"  H={h:2d} | "
-        f"sMAPE={row['mean_smape']:.2f}% "
-        f"(med {row['median_smape']:.2f}) "
-        f"MASE={row['mean_mase']:.4f} "
-        f"(med {row['median_mase']:.4f})"
-    )
+    print(f"  H={h:2d} | sMAPE={row['mean_smape']:.2f}% MASE={row['mean_mase']:.4f} RMSE={row['mean_rmse']:.2f} RMSLE={row['mean_rmsle']:.4f}")
 
 
 # =========================
