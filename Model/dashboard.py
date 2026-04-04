@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from pathlib import Path
 
-RESULT_DIR = Path("Model/result")
+RESULT_DIR = Path("./result")
 
 st.set_page_config(page_title="Inventory Forecasting Dashboard", layout="wide")
 st.title("📦 Inventory Forecasting — EDA & Results")
