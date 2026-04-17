@@ -1,0 +1,8 @@
+ablation,label,alpha,n_features,val_MAE,val_RMSE,val_sMAPE,ΔMAE vs Full,ΔRMSE vs Full,Δ%MAE vs Full,model,horizon
+FULL,Full Proposed (HPO·TPE),0.285,21,31.7674,38.9804,34.2427,0.0,0.0,0.0,chronos_hgb_ensemble_hpo,7
+B1,Chronos Only (α=1),1.0,0,34.839,43.2383,36.9713,3.0716,4.2579,9.67,chronos_hgb_ensemble_hpo,7
+B2,HGB Only (α=0),0.0,21,32.1843,39.59,33.778,0.4169,0.6096,1.31,chronos_hgb_ensemble_hpo,7
+B3,No HPO (default params),0.3,21,32.1437,39.5624,34.5627,0.3763,0.582,1.18,chronos_hgb_ensemble_hpo,7
+B4,No Lag Features (–6),0.285,15,32.2491,39.5315,34.6782,0.4817,0.5511,1.52,chronos_hgb_ensemble_hpo,7
+B5,No Calendar (–3),0.285,18,31.9033,39.2693,34.384,0.1359,0.2889,0.43,chronos_hgb_ensemble_hpo,7
+B6,No Exogenous (–6),0.285,15,35.0447,43.7297,36.8618,3.2773,4.7493,10.32,chronos_hgb_ensemble_hpo,7

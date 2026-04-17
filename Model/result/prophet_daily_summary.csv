@@ -1,4 +1,0 @@
-model,dataset,target,horizon,mean_mse,mean_rmse,mean_mae,mean_mape,mean_smape,median_smape,mean_mase,median_mase,mean_rmsle,median_rmsle
-Prophet,retail_inventory_daily,Units Sold,7,1610.2865,39.5931,31.3358,4554658966.0361,37.7751,38.2383,0.7518,0.7526,0.6004,0.5786
-Prophet,retail_inventory_daily,Units Sold,14,1636.2751,39.9215,31.6921,4534710654.0193,38.4222,38.7468,0.7616,0.7547,0.6083,0.5842
-Prophet,retail_inventory_daily,Units Sold,28,1641.0446,39.9726,31.7497,4576698607.8964,38.4665,38.8115,0.7627,0.7537,0.6095,0.5857

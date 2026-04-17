@@ -1,4 +1,0 @@
-model,dataset,target,horizon,lookback,mean_smape,median_smape,mean_mase,median_mase
-ETS,retail_inventory_daily,Units Sold,7,30,40.9963,40.1778,0.8637,0.8429
-ETS,retail_inventory_daily,Units Sold,14,30,47.1544,43.9411,0.9109,0.8893
-ETS,retail_inventory_daily,Units Sold,28,30,41.8751,40.4481,0.8187,0.7595

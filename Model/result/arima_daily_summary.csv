@@ -1,4 +1,0 @@
-model,dataset,target,horizon,mean_smape,median_smape,mean_mase,median_mase,mean_rmse,median_rmse,mean_rmsle,median_rmsle
-ARIMA_DAILY,retail_inventory_daily,Units Sold,7,37.6015,37.4332,0.7463,0.7469,39.5002,40.334,0.5927,0.5743
-ARIMA_DAILY,retail_inventory_daily,Units Sold,14,37.9026,37.8356,0.7477,0.747,39.4312,40.1557,0.5975,0.5649
-ARIMA_DAILY,retail_inventory_daily,Units Sold,28,37.7339,37.7997,0.7447,0.7411,39.2549,39.9721,0.5971,0.5646
