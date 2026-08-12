@@ -1,0 +1,116 @@
+{
+  "ARIMA": {
+    "search_space": "orders \u2208 [(1, 1, 1), (2, 1, 2), (3, 1, 2)]",
+    "best": {
+      "order": [
+        1,
+        1,
+        1
+      ]
+    },
+    "n_configs": 3,
+    "selection": "global best by mean val_MAE across 100 series",
+    "seed": 42
+  },
+  "SARIMA": {
+    "search_space": "configs \u2208 [((2, 1, 2), (1, 0, 1, 7)), ((1, 1, 1), (1, 0, 1, 7)), ((2, 1, 2), (0, 1, 1, 7))] (no exog)",
+    "best": {
+      "order": [
+        2,
+        1,
+        2
+      ],
+      "seasonal_order": [
+        1,
+        0,
+        1,
+        7
+      ]
+    },
+    "n_configs": 3,
+    "selection": "global best by mean val_MAE across 100 series",
+    "seed": 42
+  },
+  "ETS": {
+    "search_space": "configs \u2208 [{'trend': 'add', 'seasonal': 'add', 'damped_trend': False, 'seasonal_periods': 7}, {'trend': 'add', 'seasonal': 'add', 'damped_trend': True, 'seasonal_periods': 7}, {'trend': None, 'seasonal': 'add', 'damped_trend': False, 'seasonal_periods': 7}]",
+    "best": {
+      "trend": null,
+      "seasonal": "add",
+      "damped_trend": false,
+      "seasonal_periods": 7
+    },
+    "n_configs": 3,
+    "selection": "global best by mean val_MAE across 100 series",
+    "seed": 42
+  },
+  "Prophet": {
+    "search_space": "changepoint_prior_scale \u2208 [0.001, 0.5] log; seasonality_prior_scale \u2208 [0.01, 10] log",
+    "best": {
+      "changepoint_prior_scale": 0.041917115166952006,
+      "seasonality_prior_scale": 1.3311216080736887
+    },
+    "n_trials": 10,
+    "tuned_on": "10-series sample",
+    "seed": 42
+  },
+  "Ridge": {
+    "search_space": "alpha \u2208 [0.01, 0.1, 1.0, 10.0, 100.0]",
+    "best": {
+      "alpha": 100.0
+    },
+    "n_configs": 5,
+    "selection": "global best by val_MAE on rolling per-series H=7",
+    "seed": 42
+  },
+  "HGB": {
+    "search_space": "max_depth\u2208[3,12]; lr\u2208[0.01,0.2] log; max_iter\u2208[100,500]; l2\u2208[1e-8,1] log; leaf\u2208[10,80]",
+    "best": {
+      "max_depth": 7,
+      "learning_rate": 0.08874747320362246,
+      "max_iter": 406,
+      "l2_regularization": 0.002651208767143072,
+      "min_samples_leaf": 39
+    },
+    "n_trials": 50,
+    "sampler": "Optuna TPE",
+    "seed": 42
+  },
+  "LSTM": {
+    "search_space": "(hidden, lookback) \u2208 [(16, 14), (32, 30), (64, 30), (32, 60)]",
+    "best": {
+      "hidden": 64,
+      "lookback": 30
+    },
+    "n_configs": 4,
+    "epochs": 20,
+    "tune_epochs": 10,
+    "dropout": 0.2,
+    "seed": 42
+  },
+  "HGB+Chronos2 (ensemble)": {
+    "search_space": "HGB grid (same as HGB-standalone) + alpha \u2208 [0, 1]",
+    "best": {
+      "max_depth": 8,
+      "learning_rate": 0.152559790174929,
+      "max_iter": 227,
+      "l2_regularization": 1.778114272018448e-05,
+      "min_samples_leaf": 29,
+      "alpha": 0.22323363812604946
+    },
+    "n_trials": 50,
+    "sampler": "Optuna TPE joint",
+    "seed": 42
+  },
+  "Chronos-Bolt-Small (inference)": {
+    "search_space": "context_length \u2208 [None, 64, 128, 256, 512, 2048]; aggregation \u2208 ['median', 'mean_all', 'mean_central7']",
+    "best": {
+      "context_length": 256,
+      "aggregation": "mean_all"
+    },
+    "n_configs": 18,
+    "selection": "global best by val_MAE on rolling per-series H=7",
+    "best_val_MAE": 34.33343052455357,
+    "best_val_sMAPE": 36.25188190552812,
+    "seed": 42
+  }
+}
