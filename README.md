@@ -1,163 +1,132 @@
-# Inventory Forecasting — SuperC
+# Hybrid Retail Demand Forecasting with Pretrained Time-Series Models and Business Signals
 
-Dự báo tồn kho hàng ngày cho chuỗi bán lẻ sử dụng nhiều phương pháp từ baseline thống kê đến deep learning với entity embedding.
+This is our official implementation for the paper:
 
----
+> Thanh Thao Nguyen and Hung-Nghiep Tran (2025). **Hybrid Retail Demand Forecasting with Pretrained Time-Series Models and Business Signals**. Under review at the *12th International Conference on Future Data and System Engineering (FDSE 2025)*, Springer CCIS/LNCS.
 
-## Bài toán
+Authors: 
+* **Thanh Thao Nguyen** (`thaont.20@grad.uit.edu.vn`)
+* **Hung-Nghiep Tran** (`nghiepth@uit.edu.vn`, Corresponding author)
 
-Dự báo **số lượng sản phẩm bán ra (Units Sold)** cho **100 SKU** (5 cửa hàng × 20 sản phẩm) theo các horizon **7, 14, 28 ngày**.
-
-- **Dữ liệu**: `Model/dataset/sales_data.csv` — chuỗi thời gian hàng ngày từ 2022-01-01 đến 2024-01-30
-- **Train**: đến 2023-06-30 | **Val**: đến 2023-10-31 | **Test**: từ 2023-11-01 (rolling evaluation)
-- **Đánh giá**: sMAPE, MASE, RMSE, RMSLE trên rolling window
+*University of Information Technology, Vietnam National University, Ho Chi Minh City, Vietnam.*
 
 ---
 
-## Cấu trúc project
+## Introduction
 
-```
-├── Model/
-│   ├── dataset/
-│   │   └── sales_data.csv
-│   ├── baseline/               # Các model baseline
-│   │   ├── metrics.py          # Hàm tính sMAPE, MASE, RMSE, RMSLE
-│   │   ├── run_naive.py
-│   │   ├── run_snaive.py
-│   │   ├── run_mnaive.py
-│   │   ├── run_arima.py
-│   │   ├── run_ets.py
-│   │   ├── run_sarimax.py
-│   │   ├── run_prophet.ipynb
-│   │   └── run_chronos.ipynb
-│   ├── proposed/               # Model đề xuất: LSTM + Entity Embedding
-│   │   ├── lstm-multi-entity-embedding.ipynb          # Model chính
-│   │   ├── lstm-multi-entity-embedding-tuning-with-optuna.ipynb
-│   │   ├── lstm-multi-entity-embedding-tuning-with-gao.ipynb
-│   │   ├── lstm-multi-entity-embedding-tuning-with-hbo.ipynb
-│   │   ├── ablation-A1-no-categorical.ipynb
-│   │   ├── ablation-A2-onehot.ipynb
-│   │   ├── ablation-A3-ordinal.ipynb
-│   │   ├── ablation-A4-no-external.ipynb
-│   │   └── feature-importance.ipynb
-│   └── result/                 # Kết quả đã chạy (CSV + PNG)
-├── PAPER/                      # Tài liệu tham khảo
-├── dashboard.py                # Streamlit dashboard
-├── requirement.txt
-└── README.md
-```
+Accurate retail demand forecasting is essential for supply chain management, yet challenging due to the interaction between temporal dynamics and exogenous business signals like promotions and inventory levels. While pretrained time-series foundation models achieve strong zero-shot performance on generic benchmarks, their effectiveness in covariate-rich retail environments remains unclear.
+
+To address this gap, we propose **ChroBoost**, a lightweight two-stage prediction-level ensemble framework combining zero-shot Chronos models with Optuna-tuned HistGradientBoosting (HGB) across two variants (**Chronos-2-cov + HGB** and **Chronos-Bolt-Small + HGB**). This design enables the model to leverage general temporal priors while capturing complex supply-side covariates. Under a unified, leakage-aware rolling $H=7$ evaluation protocol across 15 forecasting approaches on a 100 store-product dataset, our Chronos-Bolt + HGB hybrid achieves **26.04 test MAE** and **29.40% test sMAPE**, offering modest overall gains over standalone baselines while effectively mitigating error concentration during promotional spikes and peak-demand periods.
+
+<p align="center">
+  <img src="FDSE/figures/archi.png" alt="Two-Stage Framework" width="850">
+  <br>
+  <em>Figure 1: Two-Stage Framework for Model Selection and Ensemble Learning.</em>
+</p>
 
 ---
 
-## Các model
+## Citation
 
-| Nhóm | Model | File |
-|------|-------|------|
-| Baseline | Naive, SNaive, MNaive | `run_naive/snaive/mnaive.py` |
-| Statistical | ARIMA, ETS, SARIMAX | `run_arima/ets/sarimax.py` |
-| ML/DL | Prophet, Chronos-Bolt-Small, LSTM-Univariate | `run_prophet/chronos.ipynb`, `run_lstm_uni.py` |
-| **Proposed** | **LSTM + Entity Embedding** | `lstm-multi-entity-embedding.ipynb` |
+If you find our work, code, or benchmark setup useful in your research, please cite:
 
-**Model đề xuất** sử dụng entity embedding để học đặc trưng riêng của từng cửa hàng và sản phẩm, kết hợp với calendar features và external features, được tuning bằng Optuna / GAO / HBO.
 
 ---
 
-## Kết quả (mean sMAPE, horizon=7)
+## Environment Requirement
 
-| Model | sMAPE (%) | MASE |
-|-------|-----------|------|
-| Chronos-Bolt-Small | **29.77** | **0.71** |
-| LSTM-EntityEmb (Optuna) | ~37–38 | ~0.75 |
-| LSTM-Univariate | 38.92 | 0.88 |
-| MNaive | 39.71 | 0.85 |
-| ARIMA | 39.93 | 0.85 |
-| Naive | 48.41 | 1.04 |
+The code has been tested running under **Python 3.10+**. The required packages are as follows:
 
-> MASE < 1 nghĩa là model tốt hơn Naive forecast. Xem kết quả đầy đủ trong `Model/result/` hoặc chạy dashboard.
+* `torch >= 2.1.0`
+* `chronos-forecasting >= 0.0.4`
+* `scikit-learn >= 1.3.0`
+* `optuna >= 3.3.0`
+* `statsmodels >= 0.14.0`
+* `prophet >= 1.1.5`
+* `pandas >= 2.0.0`
+* `numpy >= 1.24.0`
+* `scipy >= 1.10.0`
+* `matplotlib >= 3.7.0`
+* `seaborn >= 0.12.0`
+* `jupyter` / `ipykernel`
 
----
-
-## Cài đặt
+To set up the environment:
 
 ```bash
-pip install -r requirement.txt
-pip install torch prophet statsmodels streamlit plotly
-```
+git clone https://github.com/ngyxntthaoo/Ensembling-TS-Tabular-Retail-Demand-Forecasting.git
+cd Ensembling-TS-Tabular-Retail-Demand-Forecasting
 
-> Chronos yêu cầu thêm: `pip install chronos-forecasting`  
-> Prophet yêu cầu: `pip install prophet`
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install --upgrade pip
+pip install torch --index-url https://download.pytorch.org/whl/cu118  # or CPU / MPS
+pip install "chronos-forecasting" "scikit-learn" "optuna" "statsmodels" "prophet" pandas numpy scipy matplotlib seaborn jupyter
+```
 
 ---
 
-## Cách chạy
+## Dataset
 
-### 1. Chạy baseline models
+We evaluate on the publicly available **Retail Store Inventory and Demand Forecasting** benchmark:
+
+* **Source**: [Kaggle Dataset](https://www.kaggle.com/datasets/atomicd/retail-store-inventory-and-demand-forecasting) by Zhenzuo Zhu (DOI: `10.34740/KAGGLE/DSV/11895299`).
+* **Scale**: 76,000 daily observations from January 1, 2022 to January 30, 2024 across 5 retail stores and 20 products (100 distinct Store–Product series).
+
+The dataset file is located at `Model/dataset/sales_data.csv`.
+
+---
+
+## Reproducibility & Example to Run the Codes
+
+To demonstrate reproducibility and allow researchers to replicate the exact results reported in our paper, the full end-to-end forecasting pipeline is provided in: `Model/src/horizon-7-forecasting.ipynb`
+
+
+You can run the experiment notebook via Jupyter Lab or VS Code:
 
 ```bash
-cd Model/baseline
-
-python run_naive.py
-python run_snaive.py
-python run_mnaive.py
-python run_arima.py
-python run_ets.py
-python run_sarimax.py
+jupyter lab Model/src/horizon-7-forecasting.ipynb
 ```
 
-Kết quả lưu vào `Model/result/*_summary.csv` và `*_details.csv`.
+### Notebook Workflow Overview:
 
-Với Prophet và Chronos, mở notebook tương ứng:
-```
-Model/baseline/run_prophet.ipynb
-Model/baseline/run_chronos.ipynb
-```
-
-### 2. Chạy model đề xuất
-
-Mở và chạy theo thứ tự:
-
-```
-Model/proposed/lstm-multi-entity-embedding.ipynb        # train model chính
-Model/proposed/lstm-multi-entity-embedding-tuning-with-optuna.ipynb  # tuning
-```
-
-### 3. Chạy ablation study
-
-```
-Model/proposed/ablation-A1-no-categorical.ipynb   # bỏ entity embedding
-Model/proposed/ablation-A2-onehot.ipynb           # thay bằng one-hot
-Model/proposed/ablation-A3-ordinal.ipynb          # thay bằng ordinal
-Model/proposed/ablation-A4-no-external.ipynb      # bỏ external features
-```
-
-### 4. Xem kết quả qua dashboard
-
-```bash
-cd /path/to/Inventory-forecasting---SuperC
-python3 -m streamlit run dashboard.py
-```
-
-Dashboard gồm 4 tab:
-- **Model Comparison** — so sánh tất cả models theo metric và horizon
-- **Ablation Study** — phân tích đóng góp từng thành phần
-- **Per-SKU Analysis** — phân tích lỗi theo từng SKU
-- **Plots** — visualize actual vs predicted
+1. Exploratory Data Analysis (EDA)
+2. Leakage-Aware Feature Engineering
+3. Baseline Model Benchmarking
+4. Hybrid Ensembling & Optimization
+5. Evaluation, Statistical Tests & Ablations
 
 ---
 
-## Metrics
+## Main Results
 
-| Metric | Ý nghĩa | Tốt khi |
-|--------|---------|---------|
-| **sMAPE** | Sai số % đối xứng, không phụ thuộc scale | Càng thấp càng tốt |
-| **MASE** | So sánh với Naive forecast | < 1 (tốt hơn Naive) |
-| **RMSE** | Sai số tuyệt đối, phạt nặng outlier | Càng thấp càng tốt |
-| **RMSLE** | RMSE trên log scale, robust với outlier | Càng thấp càng tốt |
+All 15 models are evaluated under the unified, leakage-aware 7-day rolling forecasting protocol:
+
+| Group | Model | Test MAE | Test RMSE | Test sMAPE (%) |
+| :--- | :--- | :---: | :---: | :---: |
+| **Classical** | Naive | 38.08 | 45.27 | 44.34 |
+| | Seasonal Naive | 39.63 | 48.69 | 46.30 |
+| | ARIMA | 29.50 | 36.81 | 33.59 |
+| | SARIMA | 29.62 | 36.87 | 33.70 |
+| | ETS | 29.66 | 37.06 | 33.82 |
+| | Prophet | 31.40 | 39.72 | 37.83 |
+| **Machine Learning** | Ridge Regression | 27.24 | 33.26 | 30.60 |
+| | HistGradientBoosting (HGB) | 26.34 | 32.45 | 29.83 |
+| **Deep Learning** | LSTM (Univariate) | 27.58 | 34.07 | 30.89 |
+| | LSTM (Multivariate) | 27.45 | 33.52 | 30.67 |
+| **Pretrained TSFMs** | Chronos-2 (Univariate) | 29.49 | 36.38 | 33.60 |
+| | Chronos-2 (Covariate) | 29.12 | 36.30 | 33.05 |
+| | Chronos-Bolt-Small | 28.94 | 36.01 | 32.76 |
+| **Proposed Hybrid** | **Chronos-2 (cov.) + HGB** | **26.14** | **32.34** | **29.54** |
+| | **Chronos-Bolt + HGB** | **26.04** | **32.23** | **29.40** |
 
 ---
 
-## Tài liệu tham khảo
+## Contact
 
-- Chronos: *Learning the Language of Time Series* — [arxiv](https://arxiv.org/pdf/2403.07815) | [github](https://github.com/amazon-science/chronos-forecasting)
-- [FinTSB benchmark](https://github.com/TongjiFinLab/FinTSB) — XGBoost + Chronos
-- [Prophet](https://github.com/imnileshd/time-series-prophet.git)
+For questions, issues, or suggestions regarding the code and paper, please feel free to open an issue or contact:
+
+* **Thanh Thao Nguyen**: `thaont.20@grad.uit.edu.vn`
+* **Hung-Nghiep Tran**: `nghiepth@uit.edu.vn`
