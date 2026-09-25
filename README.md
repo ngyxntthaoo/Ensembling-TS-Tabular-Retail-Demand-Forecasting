@@ -19,7 +19,7 @@ Accurate retail demand forecasting is essential for supply chain management, yet
 To address this gap, we propose **ChroBoost**, a lightweight two-stage prediction-level ensemble framework combining zero-shot Chronos models with Optuna-tuned HistGradientBoosting (HGB) across two variants (**Chronos-2-cov + HGB** and **Chronos-Bolt-Small + HGB**). This design enables the model to leverage general temporal priors while capturing complex supply-side covariates. Under a unified, leakage-aware rolling $H=7$ evaluation protocol across 15 forecasting approaches on a 100 store-product dataset, our Chronos-Bolt + HGB hybrid achieves **26.04 test MAE** and **29.40% test sMAPE**, offering modest overall gains over standalone baselines while effectively mitigating error concentration during promotional spikes and peak-demand periods.
 
 <p align="center">
-  <img src="FDSE/figures/archi.png" alt="Two-Stage Framework" width="850">
+  <img src="Model/results/archi.png" alt="Two-Stage Framework" width="850">
   <br>
   <em>Figure 1: Two-Stage Framework for Model Selection and Ensemble Learning.</em>
 </p>
